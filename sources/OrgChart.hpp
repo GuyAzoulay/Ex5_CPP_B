@@ -16,6 +16,12 @@ namespace ariel
         int level;
         int number_of_children; // number of children of the current node
 
+        node(){
+            name = "";
+            parent = NULL;
+            level = 0;
+            number_of_children = 0;
+        }
         ~node()
         {
             for (uint i = 0; i < children.size(); i++)
@@ -23,6 +29,65 @@ namespace ariel
                 delete children[i];
             }
         }
+        // copy constructor
+        node(const node &other)
+        {
+            name = other.name;
+            parent = other.parent;
+            level = other.level;
+            number_of_children = other.number_of_children;
+            for (uint i = 0; i < other.children.size(); i++)
+            {
+                children.push_back(new node(*other.children[i]));
+            }
+        }
+        // assignment operator
+        node &operator=(const node &other)
+        {
+            if (this != &other)
+            {
+                name = other.name;
+                parent = other.parent;
+                level = other.level;
+                number_of_children = other.number_of_children;
+                for (uint i = 0; i < other.children.size(); i++)
+                {
+                    children.push_back(new node(*other.children[i]));
+                }
+            }
+            return *this;
+        }
+        // move constructor
+        node(node &&other)noexcept
+        {
+            name = other.name;
+            parent = other.parent;
+            level = other.level;
+            number_of_children = other.number_of_children;
+            for (uint i = 0; i < other.children.size(); i++)
+            {
+                children.push_back(other.children[i]);
+            }
+            other.children.clear();
+        }
+        //move assignment operator
+        node &operator=(node &&other)noexcept
+        {
+            if (this != &other)
+            {
+                name = other.name;
+                parent = other.parent;
+                level = other.level;
+                number_of_children = other.number_of_children;
+                for (uint i = 0; i < other.children.size(); i++)
+                {
+                    children.push_back(other.children[i]);
+                }
+                other.children.clear();
+            }
+            return *this;
+        }
+        
     };
     // creating new data type for the OrgChart
     enum IteratorType
@@ -84,6 +149,9 @@ namespace ariel
         OrgChart(const OrgChart &other);
         // A transfer constructor perform superficial copying with smart pointers.
         OrgChart(OrgChart &&other) noexcept; // use 'noexcept' to avoid leaking memory
+        // destructor
+        ~OrgChart(){}
+        
 
 
         static void delete_org_chart(node *root);
